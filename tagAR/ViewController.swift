@@ -14,18 +14,6 @@ class ViewController: UIViewController {
     @IBOutlet weak var circleBtn: UIImageView!
     @IBOutlet weak var screenShotBtn: UIImageView!
     
-    @objc func longTap(_ sender: UIGestureRecognizer){
-        if sender.state == .ended {
-            circleBtn.isHighlighted = false
-            print("stopped pressing")
-            //Do Whatever You want on End of Gesture
-        }
-        else if sender.state == .began {
-            circleBtn.isHighlighted = true
-            // start tagging
-        }
-    }
-    
     @objc func screenShot(_ sender: UIGestureRecognizer){
         print("screen shots fired")
     }
@@ -61,7 +49,7 @@ class ViewController: UIViewController {
        }
        
        @objc func didTap(withGestureRecognizer recognizer: UIGestureRecognizer) {
-           let tapLocation = recognizer.location(in: circleBtn)
+           let tapLocation = self.ARscene.center
             let hitTestResultsWithFeaturePoints = ARscene.hitTest(tapLocation, types: .featurePoint)
                        
             if recognizer.state != .ended {
@@ -90,9 +78,9 @@ class ViewController: UIViewController {
 }
 
 extension float4x4 {
-    var translation: float3 {
+    var translation: SIMD3<Float> {
         let translation = self.columns.3
-        return float3(translation.x, translation.y, translation.z)
+        return SIMD3<Float>(translation.x, translation.y, translation.z)
     }
 }
 
