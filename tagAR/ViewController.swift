@@ -68,12 +68,9 @@ class ViewController: UIViewController {
         addTapGestureToSceneView()
 
         
-//        let oneTap = UITapGestureRecognizer(target: self, action: #selector(screenShot))
-//        oneTap.numberOfTapsRequired = 1
-//        screenShotBtn.addGestureRecognizer(oneTap)
-
-//        let longGesture = UILongPressGestureRecognizer(target: self, action: #selector(longTap))
-//        circleBtn.addGestureRecognizer(longGesture)
+        let oneTap = UITapGestureRecognizer(target: self, action: #selector(screenShot))
+        oneTap.numberOfTapsRequired = 1
+        screenShotBtn.addGestureRecognizer(oneTap)
     }
 }
 
