@@ -22,7 +22,6 @@ class ViewController: UIViewController {
         }
         else if sender.state == .began {
             circleBtn.isHighlighted = true
-            print("pressing")
             // start tagging
         }
     }
@@ -42,15 +41,55 @@ class ViewController: UIViewController {
         ARscene.session.pause()
     }
     
+    func addBox(x: Float = 0, y: Float = 0, z: Float = -0.2) {
+        // fix perspective
+        let box = SCNPlane(width: 0.1, height: 0.1)
+        box.cornerRadius = 0.3
+        
+        let boxNode = SCNNode()
+        boxNode.geometry = box
+        boxNode.position = SCNVector3(x, y, z)
+        
+        ARscene.scene.rootNode.addChildNode(boxNode)
+    }
+    
+    func addTapGestureToSceneView() {
+           let tapGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(ViewController.didTap(withGestureRecognizer:)))
+           circleBtn.addGestureRecognizer(tapGestureRecognizer)
+       }
+       
+       @objc func didTap(withGestureRecognizer recognizer: UIGestureRecognizer) {
+           let tapLocation = recognizer.location(in: circleBtn)
+            circleBtn.isHighlighted = true
+            let hitTestResultsWithFeaturePoints = ARscene.hitTest(tapLocation, types: .featurePoint)
+                       
+            if recognizer.state != .ended {
+                circleBtn.isHighlighted = false
+                if let hitTestResultWithFeaturePoints = hitTestResultsWithFeaturePoints.first {
+                    let translation = hitTestResultWithFeaturePoints.worldTransform.translation
+                    addBox(x: translation.x, y: translation.y, z: translation.z)
+                }
+            }
+       }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        let oneTap = UITapGestureRecognizer(target: self, action: #selector(screenShot))
-        oneTap.numberOfTapsRequired = 1
-        screenShotBtn.addGestureRecognizer(oneTap)
+        addTapGestureToSceneView()
 
-        let longGesture = UILongPressGestureRecognizer(target: self, action: #selector(longTap))
-        circleBtn.addGestureRecognizer(longGesture)
+        
+//        let oneTap = UITapGestureRecognizer(target: self, action: #selector(screenShot))
+//        oneTap.numberOfTapsRequired = 1
+//        screenShotBtn.addGestureRecognizer(oneTap)
+
+//        let longGesture = UILongPressGestureRecognizer(target: self, action: #selector(longTap))
+//        circleBtn.addGestureRecognizer(longGesture)
+    }
+}
+
+extension float4x4 {
+    var translation: float3 {
+        let translation = self.columns.3
+        return float3(translation.x, translation.y, translation.z)
     }
 }
 
