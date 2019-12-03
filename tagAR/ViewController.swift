@@ -45,6 +45,8 @@ class ViewController: UIViewController {
         // fix perspective
         let box = SCNPlane(width: 0.1, height: 0.1)
         box.cornerRadius = 0.3
+        box.firstMaterial?.diffuse.contents = UIImage(named: "../assets/spraytag_01.png")
+        box.firstMaterial?.transparency = 0.25;
         
         let boxNode = SCNNode()
         boxNode.geometry = box
@@ -60,15 +62,16 @@ class ViewController: UIViewController {
        
        @objc func didTap(withGestureRecognizer recognizer: UIGestureRecognizer) {
            let tapLocation = recognizer.location(in: circleBtn)
-            circleBtn.isHighlighted = true
             let hitTestResultsWithFeaturePoints = ARscene.hitTest(tapLocation, types: .featurePoint)
                        
             if recognizer.state != .ended {
-                circleBtn.isHighlighted = false
+                circleBtn.isHighlighted = true
                 if let hitTestResultWithFeaturePoints = hitTestResultsWithFeaturePoints.first {
                     let translation = hitTestResultWithFeaturePoints.worldTransform.translation
                     addBox(x: translation.x, y: translation.y, z: translation.z)
                 }
+            } else {
+                circleBtn.isHighlighted = false
             }
        }
     

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CD45E3DE2396E41300FE3AD1 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = CD45E3DD2396E41200FE3AD1 /* assets */; };
 		CD7EAD87238EC77F006BA9A2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD7EAD86238EC77F006BA9A2 /* AppDelegate.swift */; };
 		CD7EAD89238EC77F006BA9A2 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD7EAD88238EC77F006BA9A2 /* SceneDelegate.swift */; };
 		CD7EAD8B238EC77F006BA9A2 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD7EAD8A238EC77F006BA9A2 /* ViewController.swift */; };
@@ -35,6 +36,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		CD45E3DD2396E41200FE3AD1 /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = assets; sourceTree = "<group>"; };
 		CD7EAD83238EC77F006BA9A2 /* tagAR.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = tagAR.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD7EAD86238EC77F006BA9A2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CD7EAD88238EC77F006BA9A2 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -83,6 +85,7 @@
 				CD7EAD9C238EC780006BA9A2 /* tagARTests */,
 				CD7EADA7238EC780006BA9A2 /* tagARUITests */,
 				CD7EAD84238EC77F006BA9A2 /* Products */,
+				CD45E3DD2396E41200FE3AD1 /* assets */,
 			);
 			sourceTree = "<group>";
 		};
@@ -233,6 +236,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CD7EAD93238EC77F006BA9A2 /* LaunchScreen.storyboard in Resources */,
+				CD45E3DE2396E41300FE3AD1 /* assets in Resources */,
 				CD7EAD90238EC77F006BA9A2 /* Assets.xcassets in Resources */,
 				CD7EAD8E238EC77F006BA9A2 /* Main.storyboard in Resources */,
 			);
