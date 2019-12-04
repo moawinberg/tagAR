@@ -8,18 +8,47 @@
 
 import UIKit
 import ARKit
+import AVFoundation
 
 class ViewController: UIViewController {
     @IBOutlet weak var ARscene: ARSCNView!
     @IBOutlet weak var circleBtn: UIImageView!
     @IBOutlet weak var screenShotBtn: UIImageView!
+
+    var cameraAudio:AVAudioPlayer?
+    var sprayAudio:AVAudioPlayer?
+    
+    func playCameraAudio() {
+        let path = Bundle.main.path(forResource: "./assets/cameraAudio.mp3", ofType:nil)!
+        let url = URL(fileURLWithPath: path)
+
+        do {
+            cameraAudio = try AVAudioPlayer(contentsOf: url)
+            cameraAudio?.play()
+        }
+        catch {
+            print("error with sound")
+        }
+    }
     
     @objc func screenShot(_ sender: UIGestureRecognizer){
+        // capture image and save to camera roll
+        playCameraAudio()
+
         let renderer = UIGraphicsImageRenderer(size: view.bounds.size)
         let image = renderer.image { ctx in
             view.drawHierarchy(in: view.bounds, afterScreenUpdates: true)
         }
         UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil);
+        
+        // add flicking image as feedback
+        let clickImage = UIImage(named: "./assets/blackBackground.png")
+        let imageView = UIImageView(image: clickImage)
+        imageView.contentMode = .scaleToFill
+        view.addSubview(imageView)
+        Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true, block: { timer in
+            imageView.image = nil
+        })
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -48,24 +77,40 @@ class ViewController: UIViewController {
     }
     
     func addTapGestureToSceneView() {
-           let tapGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(ViewController.didTap(withGestureRecognizer:)))
-           circleBtn.addGestureRecognizer(tapGestureRecognizer)
-       }
+       let tapGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(ViewController.didTap(withGestureRecognizer:)))
+       circleBtn.addGestureRecognizer(tapGestureRecognizer)
+   }
+    
+    func addSprayAudio() {
+        let path = Bundle.main.path(forResource: "../assets/spray-paint.mp3", ofType:nil)!
+        let url = URL(fileURLWithPath: path)
+
+        do {
+            sprayAudio = try AVAudioPlayer(contentsOf: url)
+            sprayAudio?.numberOfLoops = -1
+        }
+        catch {
+            print("error with sound")
+        }
+    }
        
-       @objc func didTap(withGestureRecognizer recognizer: UIGestureRecognizer) {
-           let tapLocation = self.ARscene.center
-            let hitTestResultsWithFeaturePoints = ARscene.hitTest(tapLocation, types: .featurePoint)
-                       
-            if recognizer.state != .ended {
-                circleBtn.isHighlighted = true
-                if let hitTestResultWithFeaturePoints = hitTestResultsWithFeaturePoints.first {
-                    let translation = hitTestResultWithFeaturePoints.worldTransform.translation
-                    addBox(x: translation.x, y: translation.y, z: translation.z)
-                }
-            } else {
-                circleBtn.isHighlighted = false
+   @objc func didTap(withGestureRecognizer recognizer: UIGestureRecognizer) {
+        let tapLocation = self.ARscene.center
+        let hitTestResultsWithFeaturePoints = ARscene.hitTest(tapLocation, types: .featurePoint)
+        addSprayAudio()
+
+        if recognizer.state != .ended {
+            circleBtn.isHighlighted = true
+            if let hitTestResultWithFeaturePoints = hitTestResultsWithFeaturePoints.first {
+                let translation = hitTestResultWithFeaturePoints.worldTransform.translation
+                addBox(x: translation.x, y: translation.y, z: translation.z)
+                sprayAudio?.play()
             }
-       }
+        } else {
+            sprayAudio?.stop()
+            circleBtn.isHighlighted = false
+        }
+   }
     
     override func viewDidLoad() {
         super.viewDidLoad()
