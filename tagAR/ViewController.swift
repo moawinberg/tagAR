@@ -15,7 +15,11 @@ class ViewController: UIViewController {
     @IBOutlet weak var screenShotBtn: UIImageView!
     
     @objc func screenShot(_ sender: UIGestureRecognizer){
-        print("screen shots fired")
+        let renderer = UIGraphicsImageRenderer(size: view.bounds.size)
+        let image = renderer.image { ctx in
+            view.drawHierarchy(in: view.bounds, afterScreenUpdates: true)
+        }
+        UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil);
     }
 
     override func viewWillAppear(_ animated: Bool) {
