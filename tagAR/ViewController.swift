@@ -9,6 +9,7 @@
 import UIKit
 import ARKit
 import AVFoundation
+import AudioToolbox
 
 class ViewController: UIViewController {
     @IBOutlet weak var ARscene: ARSCNView!
@@ -104,6 +105,7 @@ class ViewController: UIViewController {
             if let hitTestResultWithFeaturePoints = hitTestResultsWithFeaturePoints.first {
                 let translation = hitTestResultWithFeaturePoints.worldTransform.translation
                 addBox(x: translation.x, y: translation.y, z: translation.z)
+                AudioServicesPlayAlertSound(1519)
                 sprayAudio?.play()
             }
         } else {
