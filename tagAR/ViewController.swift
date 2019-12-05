@@ -18,6 +18,7 @@ class ViewController: UIViewController {
 
     var cameraAudio:AVAudioPlayer?
     var sprayAudio:AVAudioPlayer?
+    var sprayCanAudio:AVAudioPlayer?
     
     func playCameraAudio() {
         let path = Bundle.main.path(forResource: "./assets/cameraAudio.mp3", ofType:nil)!
@@ -63,6 +64,14 @@ class ViewController: UIViewController {
         ARscene.session.pause()
     }
     
+    override func motionBegan(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
+        addSprayCanAudio()
+    }
+    
+    override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
+       sprayCanAudio?.stop()
+    }
+    
     func addBox(x: Float = 0, y: Float = 0, z: Float = -0.2) {
         // fix perspective
         let box = SCNPlane(width: 0.1, height: 0.1)
@@ -89,6 +98,20 @@ class ViewController: UIViewController {
         do {
             sprayAudio = try AVAudioPlayer(contentsOf: url)
             sprayAudio?.numberOfLoops = -1
+        }
+        catch {
+            print("error with sound")
+        }
+    }
+    
+    func addSprayCanAudio() {
+        let path = Bundle.main.path(forResource: "./assets/spraycanShake.mp3", ofType:nil)!
+        let url = URL(fileURLWithPath: path)
+
+        do {
+            sprayCanAudio = try AVAudioPlayer(contentsOf: url)
+            sprayCanAudio?.numberOfLoops = -1
+            sprayCanAudio?.play()
         }
         catch {
             print("error with sound")
