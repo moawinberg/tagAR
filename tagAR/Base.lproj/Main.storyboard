@@ -36,6 +36,11 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="tintColor" systemColor="tertiarySystemGroupedBackgroundColor" red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FQg-tm-745">
+                                <rect key="frame" x="187" y="779" width="40" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Spray"/>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <gestureRecognizers/>
@@ -43,6 +48,7 @@
                     </view>
                     <connections>
                         <outlet property="ARscene" destination="W3w-yu-HR4" id="CDn-Cx-Lud"/>
+                        <outlet property="button" destination="FQg-tm-745" id="5o1-Gq-T82"/>
                         <outlet property="circleBtn" destination="tqa-NN-vlW" id="Ae1-eX-NE9"/>
                         <outlet property="screenShotBtn" destination="HGc-Ew-bFR" id="fNW-y1-vGU"/>
                     </connections>
