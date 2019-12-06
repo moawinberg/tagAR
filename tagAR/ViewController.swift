@@ -11,11 +11,13 @@ import ARKit
 import AVFoundation
 import AudioToolbox
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, ARSCNViewDelegate {
     @IBOutlet weak var ARscene: ARSCNView!
     @IBOutlet weak var circleBtn: UIImageView!
     @IBOutlet weak var screenShotBtn: UIImageView!
-
+    @IBOutlet weak var button: UIButton!
+    var previousPoint: SCNVector3?
+    
     var cameraAudio:AVAudioPlayer?
     var sprayAudio:AVAudioPlayer?
     var sprayCanAudio:AVAudioPlayer?
@@ -72,25 +74,6 @@ class ViewController: UIViewController {
        sprayCanAudio?.stop()
     }
     
-    func addBox(x: Float = 0, y: Float = 0, z: Float = -0.2) {
-        // fix perspective
-        let box = SCNPlane(width: 0.1, height: 0.1)
-        box.cornerRadius = 0.3
-        box.firstMaterial?.diffuse.contents = UIImage(named: "../assets/spraytag_01.png")
-        box.firstMaterial?.transparency = 0.25;
-        
-        let boxNode = SCNNode()
-        boxNode.geometry = box
-        boxNode.position = SCNVector3(x, y, z)
-        
-        ARscene.scene.rootNode.addChildNode(boxNode)
-    }
-    
-    func addTapGestureToSceneView() {
-       let tapGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(ViewController.didTap(withGestureRecognizer:)))
-       circleBtn.addGestureRecognizer(tapGestureRecognizer)
-   }
-    
     func addSprayAudio() {
         let path = Bundle.main.path(forResource: "../assets/spray-paint.mp3", ofType:nil)!
         let url = URL(fileURLWithPath: path)
@@ -117,41 +100,45 @@ class ViewController: UIViewController {
             print("error with sound")
         }
     }
-       
-   @objc func didTap(withGestureRecognizer recognizer: UIGestureRecognizer) {
-        let tapLocation = self.ARscene.center
-        let hitTestResultsWithFeaturePoints = ARscene.hitTest(tapLocation, types: .featurePoint)
-        addSprayAudio()
-
-        if recognizer.state != .ended {
-            circleBtn.isHighlighted = true
-            if let hitTestResultWithFeaturePoints = hitTestResultsWithFeaturePoints.first {
-                let translation = hitTestResultWithFeaturePoints.worldTransform.translation
-                addBox(x: translation.x, y: translation.y, z: translation.z)
+    
+    func renderer(_ renderer: SCNSceneRenderer, willRenderScene scene: SCNScene, atTime time: TimeInterval) {
+        guard let featurePointHitTest = self.ARscene.hitTest(self.ARscene.center, types: .featurePoint).first else { return }
+        
+        let worldCoordinates = featurePointHitTest.worldTransform
+        let currentPosition = SCNVector3(worldCoordinates.columns.3.x,  worldCoordinates.columns.3.y,  worldCoordinates.columns.3.z)
+        
+        if self.button.isHighlighted {
+            if let previousPoint = previousPoint {
+                let line = lineFrom(vector: previousPoint, toVector: currentPosition)
+                let lineNode = SCNNode(geometry: line)
+                lineNode.geometry?.firstMaterial?.diffuse.contents = UIColor.red
+                ARscene.scene.rootNode.addChildNode(lineNode)
+                
                 AudioServicesPlayAlertSound(1519)
                 sprayAudio?.play()
             }
         } else {
             sprayAudio?.stop()
-            circleBtn.isHighlighted = false
         }
-   }
+        previousPoint = currentPosition
+    }
     
+    func lineFrom(vector vector1: SCNVector3, toVector vector2: SCNVector3) -> SCNGeometry {
+        let indices: [Int32] = [0, 1]
+        let source = SCNGeometrySource(vertices: [vector1, vector2])
+        let element = SCNGeometryElement(indices: indices, primitiveType: .line)
+        return SCNGeometry(sources: [source], elements: [element])
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        addTapGestureToSceneView()
-
+        ARscene.delegate = self
+        addSprayAudio()
         
         let oneTap = UITapGestureRecognizer(target: self, action: #selector(screenShot))
-        oneTap.numberOfTapsRequired = 1
         screenShotBtn.addGestureRecognizer(oneTap)
     }
 }
 
-extension float4x4 {
-    var translation: SIMD3<Float> {
-        let translation = self.columns.3
-        return SIMD3<Float>(translation.x, translation.y, translation.z)
-    }
-}
+
 
