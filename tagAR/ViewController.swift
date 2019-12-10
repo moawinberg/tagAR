@@ -104,19 +104,19 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         guard let featurePointHitTest = self.ARscene.hitTest(self.ARscene.center, types: .featurePoint).first else { return }
         
         let worldCoordinates = featurePointHitTest.worldTransform
-        let currentPosition = SCNVector3(worldCoordinates.columns.3.x,  worldCoordinates.columns.3.y,  worldCoordinates.columns.3.z)
+        
+        let position = SIMD3<Float>(worldCoordinates.columns.3.x, worldCoordinates.columns.3.y, worldCoordinates.columns.3.z)
+        
+        let newNode = SCNNode()
+        newNode.simdPosition = position
         
         if self.button.isHighlighted {
             let spray = SCNPlane(width: 0.05, height: 0.05)
-            spray.cornerRadius = 0.5
             spray.firstMaterial?.diffuse.contents = UIImage(named: "../assets/spraytag_01.png")
-            spray.firstMaterial?.transparency = 0.3;
-            
-            let sprayNode = SCNNode()
-            sprayNode.geometry = spray
-            sprayNode.position = currentPosition
-            
-            self.ARscene.scene.rootNode.addChildNode(sprayNode)
+            spray.firstMaterial?.transparency = 0.5;
+            newNode.geometry = spray
+            ARscene.scene.rootNode.addChildNode(newNode)
+
             AudioServicesPlayAlertSound(1519)
             sprayAudio?.play()
         } else {
