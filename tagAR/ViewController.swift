@@ -101,26 +101,28 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     }
     
     func renderer(_ renderer: SCNSceneRenderer, willRenderScene scene: SCNScene, atTime time: TimeInterval) {
-        guard let featurePointHitTest = self.ARscene.hitTest(self.ARscene.center, types: .featurePoint).first else { return }
-        
-        let worldCoordinates = featurePointHitTest.worldTransform
-        
-        let position = SIMD3<Float>(worldCoordinates.columns.3.x, worldCoordinates.columns.3.y, worldCoordinates.columns.3.z)
-        
-        let newNode = SCNNode()
-        newNode.simdPosition = position
-        
-        if self.button.isHighlighted {
-            let spray = SCNPlane(width: 0.05, height: 0.05)
-            spray.firstMaterial?.diffuse.contents = UIImage(named: "../assets/spraytag_01.png")
-            spray.firstMaterial?.transparency = 0.5;
-            newNode.geometry = spray
-            ARscene.scene.rootNode.addChildNode(newNode)
+        DispatchQueue.main.async {
+            guard let featurePointHitTest = self.ARscene.hitTest(self.ARscene.center, types: .featurePoint).first else { return }
 
-            AudioServicesPlayAlertSound(1519)
-            sprayAudio?.play()
-        } else {
-            sprayAudio?.stop()
+            let worldCoordinates = featurePointHitTest.worldTransform
+
+            let position = SIMD3<Float>(worldCoordinates.columns.3.x, worldCoordinates.columns.3.y, worldCoordinates.columns.3.z)
+            
+            let newNode = SCNNode()
+            newNode.simdPosition = position
+            
+            if self.button.isHighlighted {
+                let spray = SCNPlane(width: 0.05, height: 0.05)
+                spray.firstMaterial?.diffuse.contents = UIImage(named: "../assets/spraytag_01.png")
+                spray.firstMaterial?.transparency = 0.5;
+                newNode.geometry = spray
+                self.ARscene.scene.rootNode.addChildNode(newNode)
+
+                // AudioServicesPlayAlertSound(1519)
+                self.sprayAudio?.play()
+            } else {
+                self.sprayAudio?.stop()
+            }
         }
     }
 
