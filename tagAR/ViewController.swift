@@ -101,26 +101,30 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         }
     }
     
+
+    
     func renderer(_ renderer: SCNSceneRenderer, willRenderScene scene: SCNScene, atTime time: TimeInterval) {
-        guard let featurePointHitTest = self.ARscene.hitTest(self.ARscene.center, types: .featurePoint).first else { return }
-        
-        let worldCoordinates = featurePointHitTest.worldTransform
-        let currentPosition = SCNVector3(worldCoordinates.columns.3.x,  worldCoordinates.columns.3.y,  worldCoordinates.columns.3.z)
-        
-        if self.button.isHighlighted {
-            if let previousPoint = previousPoint {
-                let line = lineFrom(vector: previousPoint, toVector: currentPosition)
-                let lineNode = SCNNode(geometry: line)
-                lineNode.geometry?.firstMaterial?.diffuse.contents = UIColor.red
-                ARscene.scene.rootNode.addChildNode(lineNode)
-                
-                AudioServicesPlayAlertSound(1519)
-                sprayAudio?.play()
+        DispatchQueue.main.async {
+            guard let featurePointHitTest = self.ARscene.hitTest(self.ARscene.center, types: .featurePoint).first else { return }
+
+            let worldCoordinates = featurePointHitTest.worldTransform
+            let currentPosition = SCNVector3(worldCoordinates.columns.3.x,  worldCoordinates.columns.3.y,  worldCoordinates.columns.3.z)
+            
+            if self.button.isHighlighted {
+                if let previousPoint = self.previousPoint {
+                    let line = self.lineFrom(vector: previousPoint, toVector: currentPosition)
+                    let lineNode = SCNNode(geometry: line)
+                    lineNode.geometry?.firstMaterial?.diffuse.contents = UIColor.red
+                    self.ARscene.scene.rootNode.addChildNode(lineNode)
+                    
+                    AudioServicesPlayAlertSound(1519)
+                    self.sprayAudio?.play()
+                }
+            } else {
+                self.sprayAudio?.stop()
             }
-        } else {
-            sprayAudio?.stop()
+            self.previousPoint = currentPosition
         }
-        previousPoint = currentPosition
     }
     
     func lineFrom(vector vector1: SCNVector3, toVector vector2: SCNVector3) -> SCNGeometry {
