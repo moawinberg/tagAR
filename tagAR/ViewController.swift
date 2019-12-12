@@ -119,7 +119,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                 self.ARscene.scene.rootNode.addChildNode(newNode)
 
                 // AudioServicesPlayAlertSound(1519)
-                self.sprayAudio?.play()
+                // self.sprayAudio?.play()
             } else {
                 self.sprayAudio?.stop()
             }
